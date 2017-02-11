@@ -34,7 +34,10 @@ end
 
 post '/new.erb' do
   @content = params[:text_area]
-
+    if @content.length <= 0
+      @error = "Type post text "
+      return erb :new
+    end
   erb "You typet #{@content}"
 end
 
