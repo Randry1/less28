@@ -1,1 +1,21 @@
 <h2>Lates posts:</h2>
+<div class="row">
+  <div class="col-md-12">
+      <table class="table table-striped table-hover table-bordered">
+        <thead>
+        <th>Id</th>
+        <th>Posts</th>
+        <th>Date</th>
+        </thead>
+        <tbody>
+        <% @table_posts.each do |row| %>
+          <tr>
+            <td><%= row['id'] %></td>
+            <td><%= row['content'] %></td>
+            <td><%= row['create_date'] %></td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+  </div>
+</div>

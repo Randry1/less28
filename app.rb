@@ -25,6 +25,8 @@ configure do
 end
 
 get '/' do
+  @table_posts = @db.execute 'SELECT * FROM Posts ORDER BY id DESC'
+
 	erb :index
 end
 
@@ -40,12 +42,13 @@ post '/new.erb' do
     end
 
   #Сохранение данный в базе данныйх
-  @db.execute 'INSERT INTO Posts (create_date, content) VALUES (?,?)', ["datetime()",@content]
+  @db.execute 'INSERT INTO Posts (create_date, content) VALUES (datetime(),?)', [@content]
 
-  erb "You typet #{@content}"
+  redirect to '/'
+  # erb "You typet #{@content}"
 end
 
 get '/posts' do
-  @table_posts = @db.execute 'SELECT * FROM Posts'
+
   erb :post
 end
