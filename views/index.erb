@@ -3,17 +3,34 @@
   <div class="col-md-12">
 
     <% @table_posts.each do |row| %>
-
+        <blockquote>
         <p class="text-success">
           <%= row['content'] %>
         </p>
-        <p>
+       <footer>
           Add at:<%= row['create_date'] %>
-        </p>
+       </footer>
         <a href="/details/<%= row['id'] %>">Comments</a>
-        <br />
-        <br />
+        </blockquote>
 
+        <% #Запрос таблицы комментариев к базе данных
+           @comment_table = @db.execute 'SELECT * FROM Comments WHERE post_id = ?', [row['id']] %>
+
+        <div class="row" style="background-color: #dff0d8; margin-left: 10px;">
+          <div class="col-md-10" >
+
+            <%	 unless @comment_table.nil? %>
+                <% @comment_table.each do |comment| %>
+                    <blockquote style="font-size: 90%">
+                      <p>  <%= comment['content'] %></p>
+
+                      <footer>  <%= comment['create_date'] %> - Author: <%= comment['name_commentator'].capitalize %></footer>
+                    </blockquote>
+                <% end %>
+            <% end %>
+          </div>
+
+        </div>
     <% end %>
 
   </div>

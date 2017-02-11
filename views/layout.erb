@@ -36,9 +36,15 @@
 			</nav>
 
 			<div>
-			      <%if @error && @error.length > 0 then %>
-			          <div class="alert alert-danger"><%=@error%></div>
-			      <% end %>
+				<%if @error.is_a?(Array) && @error.size != 0 then %>
+						<div class="alert alert-danger">
+							<ul>
+								<% @error.each do |item| %>
+										<li><%= item %></li>
+								<% end %>
+							</ul>
+						</div>
+				<% end %>
 			      <%= yield %>
 			</div>
 

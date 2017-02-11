@@ -28,12 +28,14 @@ configure do
                    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
                     "create_date" DATE,
                     "content" TEXT,
-                    "post_id" INTEGER
+                    "post_id" INTEGER,
+                    "name_commentator" TEXT
                 );'
 end
 
 get '/' do
   @table_posts = @db.execute 'SELECT * FROM Posts ORDER BY id DESC'
+
   erb :index
 end
 
@@ -72,15 +74,40 @@ end
 
 post '/details/:post_id' do
   @post_id = params[:post_id]
+  @name_commentator = params[:name_commentator]
   @table_posts = @db.execute 'SELECT * FROM Posts WHERE id = ?', @post_id
   @comment = params[:comment]
+  @error = []
+  validation = {:name_commentator => 'You not enter name',:comment => 'You not enter comment'}
+  validation.each do |key,value|
+    if params[key] == ''
+      @error << value
+    end
+  end
 
+  if @error.size != 0
+    @error.join(', ')
+    return  erb :details
+  end
 
   #Сохранение данный в базе данныйх
-  @db.execute 'INSERT INTO Comments (create_date, content,post_id) VALUES (datetime(),?,?)',
-              [@comment,@post_id]
+  @db.execute 'INSERT INTO Comments
+                (
+                  create_date,
+                  content,
+                  post_id,
+                  name_commentator
+                )
+                VALUES
+                (
+                  datetime(),
+                  ?,
+                  ?,
+                  ?
+                )',
+              [@comment,@post_id,@name_commentator]
 
   #Запрос таблицы комментариев к базе данных
-  @comment_table = @db.execute 'SELECT * FROM Comments WHERE post_id = ?', @post_id
+  @comment_table = @db.execute 'SELECT * FROM Comments WHERE post_id = ? ORDER BY id', @post_id
   erb :details
 end
