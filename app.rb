@@ -22,23 +22,31 @@ configure do
                     "create_date" DATE,
                     "content" TEXT
                 );'
+
+  @db.execute 'CREATE TABLE IF NOT EXISTS "Comments"
+                (
+                   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+                    "create_date" DATE,
+                    "content" TEXT,
+                    "post_id" INTEGER
+                );'
 end
 
 get '/' do
   @table_posts = @db.execute 'SELECT * FROM Posts ORDER BY id DESC'
-	erb :index
+  erb :index
 end
 
 get '/new' do
-	erb :new
+  erb :new
 end
 
 post '/new.erb' do
   @content = params[:text_area]
-    if @content.length <= 0
-      @error = "Type post text "
-      return erb :new
-    end
+  if @content.length <= 0
+    @error = "Type post text "
+    return erb :new
+  end
 
   #Сохранение данный в базе данныйх
   @db.execute 'INSERT INTO Posts (create_date, content) VALUES (datetime(),?)', [@content]
@@ -56,6 +64,23 @@ end
 get '/details/:post_id' do
   @post_id = params[:post_id]
   @table_posts = @db.execute 'SELECT * FROM Posts WHERE id = ?', @post_id
+  #Запрос таблицы комментариев к базе данных
+  @comment_table = @db.execute 'SELECT * FROM Comments WHERE post_id = ?', @post_id
 
+  erb :details
+end
+
+post '/details/:post_id' do
+  @post_id = params[:post_id]
+  @table_posts = @db.execute 'SELECT * FROM Posts WHERE id = ?', @post_id
+  @comment = params[:comment]
+
+
+  #Сохранение данный в базе данныйх
+  @db.execute 'INSERT INTO Comments (create_date, content,post_id) VALUES (datetime(),?,?)',
+              [@comment,@post_id]
+
+  #Запрос таблицы комментариев к базе данных
+  @comment_table = @db.execute 'SELECT * FROM Comments WHERE post_id = ?', @post_id
   erb :details
 end

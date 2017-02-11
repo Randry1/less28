@@ -15,12 +15,24 @@
     <% end %>
   </div>
 </div>
+<div class="row" style="background-color: #dff0d8; margin-left: 10px">
+
+  <div class="col-md-11">
+    <h4>Comments</h4>
+    <%	 unless @comment_table.nil? %>
+    <% @comment_table.each do |comment| %>
+        <p>  <%= comment['content'] %></p>
+        <p>  <%= comment['create_date'] %></p>
+    <% end %>
+        <% end %>
+  </div>
+</div>
 
 <div class="row">
   <div class="col-md-5">
-    <h4>Comments</h4>
+    <h4>Add comments</h4>
     <form action="/details/<%= @post_id %>" method="post" role="form">
-      <textarea name="text_area" class="form-control" rows="5" placeholder="Type comment text here"></textarea>
+      <textarea name="comment" class="form-control" rows="5" placeholder="Type comment text here"></textarea>
       <br />
       <button type="submit" class="btn btn-primary">Add comment</button>
     </form>
